@@ -1,56 +1,96 @@
-import { useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
-import styled from "styled-components";
-
-/***** Styled ******/
-const Title = styled.h1`
-  font-size: 48px;
-  color: ${(props) => props.theme.accentColor};
-`;
-const Container = styled.div`
-  padding: 0px 20px;
-  margin: 0 auto;
-  max-width: 480px;
-`;
-const Header = styled.header`
-  height: 10vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-const Loader = styled.span`
-  text-align: center;
-  display: block;
-`;
-
-/***** Types *****/
-interface RouteState {
-  name: string;
-  hash: string;
-  key: string;
-  pathname: string;
-  search: string;
-}
+import { useEffect, useState } from "react";
+import { Outlet, useLocation, useParams, Link } from "react-router-dom";
+import InfoData from "../types/CoinInterface";
+import PriceData from "../types/CoinInterface";
+import {
+  Container,
+  Header,
+  Title,
+  Loader,
+  Overview,
+  OveriewItem,
+  DescriptionP,
+  Tabs,
+  Tab,
+} from "../styles/CoinStyled";
 
 function Coin() {
   const [loading, setLoading] = useState(true);
-  const { coinId } = useParams();
-
-  // Q. Link의 state에 담은 데이터는 어떻게 데려올 수 있을까?
-  // A. Use "useLocation" Hook
+  const { coinId } = useParams<string>();
   const { state } = useLocation();
+  const [info, setInfo] = useState<InfoData>();
+  const [price, setPrice] = useState<PriceData>();
+
+  useEffect(() => {
+    (async () => {
+      const infoData = await (
+        await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
+      ).json();
+      const priceData = await (
+        await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)
+      ).json();
+
+      setInfo(infoData);
+      setPrice(priceData);
+      setLoading(false);
+    })();
+  }, [coinId]);
 
   return (
     <>
       <Container>
         <Header>
-          {/* localhost:3000/name 으로 들어오거나, localhost:3000으로 들어올 때의
-              Link의 state 생성과정은 다르기 때문에 state 값이 없으면 Loading... 이 보여지도록 처리한다.
-              왜냐하면 state는 Link를 클릭할 때 만들어주기 때문이다. */}
-          <Title>Coin: {state?.name || `Loading ...`}</Title>
+          <Title>
+            Coin -{" "}
+            {state?.name ? state.name : loading ? "Loading ..." : info?.name}
+          </Title>
         </Header>
 
-        {loading ? <Loader>Loading ...</Loader> : null}
+        {loading ? (
+          <Loader>Loading ...</Loader>
+        ) : (
+          <>
+            <Overview>
+              <OveriewItem>
+                <span>Rank: </span>
+                <span>{info?.rank}</span>
+              </OveriewItem>
+              <OveriewItem>
+                <span>Symbol</span>
+                <span>{info?.symbol}</span>
+              </OveriewItem>
+              <OveriewItem>
+                <span>Open Source: </span>
+                <span>{info?.open_source ? `yes` : `no`}</span>
+              </OveriewItem>
+            </Overview>
+
+            <DescriptionP>{info?.description}</DescriptionP>
+
+            <Overview>
+              <OveriewItem>
+                <span>Total Syply: </span>
+                <span>{price?.total_supply}</span>
+              </OveriewItem>
+              <OveriewItem>
+                <span>Max Supply</span>
+                <span>{price?.max_supply}</span>
+              </OveriewItem>
+            </Overview>
+
+            <Tabs>
+              <Tab>
+                <Link to={`/${coinId}/price`}>Price</Link>
+              </Tab>
+              <Tab>
+                <Link to={`/${coinId}/chart`}>Chart</Link>
+              </Tab>
+            </Tabs>
+
+            {/* Link URL에 따라 아래의 컴포넌트가 다르게 보여짐. */}
+            <Outlet />
+          </>
+        )}
       </Container>
     </>
   );
