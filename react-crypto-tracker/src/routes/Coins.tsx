@@ -9,10 +9,22 @@ import {
   Coin,
   Img,
 } from "../styles/CoinsStyled";
-import CoinInterface from "../types/CoinsInterface";
+import ICoins from "../types/CoinsInterface";
+import { useQuery } from "@tanstack/react-query";
+import { fetchCoins } from "../api";
 
 function Coins() {
-  const [coinList, setCoinList] = useState<CoinInterface[]>([]);
+  // 사용법: const { isLoading/*apiFunction 로딩유무*/, data/*리턴값*/ } = useQuery(key, apiFunction)
+  const { isLoading: loading, data: coinList } = useQuery<ICoins[], Error>({
+    queryKey: ["allCoins"],
+    queryFn: fetchCoins,
+    select: (data) => data.slice(0, 100),
+  });
+
+  /*
+  // React Query를 사용하게 되면 이건 필요없어짐... 기록용으로 보관하자.
+
+  const [coinList, setCoinList] = useState<ICoins[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Call API - 즉시실행 함수 사용
@@ -25,6 +37,7 @@ function Coins() {
       setLoading(false);
     })();
   }, []);
+  */
 
   return (
     <>
@@ -37,7 +50,7 @@ function Coins() {
           <Loader>Loading ...</Loader>
         ) : (
           <CoinsList>
-            {coinList.map((coin) => (
+            {coinList?.map((coin) => (
               <Coin key={coin.id}>
                 <Link to={`/${coin.id}`} state={{ name: coin.name }}>
                   <Img

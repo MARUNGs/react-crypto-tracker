@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { Outlet, useLocation, useParams, Link } from "react-router-dom";
+import {
+  Outlet,
+  useLocation,
+  useParams,
+  Link,
+  useMatch,
+} from "react-router-dom";
 import InfoData from "../types/CoinInterface";
 import PriceData from "../types/CoinInterface";
 import {
@@ -20,6 +26,8 @@ function Coin() {
   const { state } = useLocation();
   const [info, setInfo] = useState<InfoData>();
   const [price, setPrice] = useState<PriceData>();
+  const priceMatch = useMatch("/:coinId/price");
+  const chartMatch = useMatch("/:coinId/chart");
 
   useEffect(() => {
     (async () => {
@@ -79,10 +87,10 @@ function Coin() {
             </Overview>
 
             <Tabs>
-              <Tab>
+              <Tab $isActive={priceMatch ? true : false}>
                 <Link to={`/${coinId}/price`}>Price</Link>
               </Tab>
-              <Tab>
+              <Tab $isActive={chartMatch ? true : false}>
                 <Link to={`/${coinId}/chart`}>Chart</Link>
               </Tab>
             </Tabs>

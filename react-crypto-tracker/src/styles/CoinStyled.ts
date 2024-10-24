@@ -56,7 +56,7 @@ export const Tabs = styled.div`
   gap: 10px;
 `;
 
-export const Tab = styled.span`
+export const Tab = styled.span<{ $isActive: boolean }>`
   text-align: center;
   text-transform: uppercase;
   font-size: 12px;
@@ -64,6 +64,9 @@ export const Tab = styled.span`
   background-color: rgba(0, 0, 0, 0.5);
   padding: 7px 0px;
   border-radius: 10px;
+  color: ${(props) =>
+    props.$isActive ? props.theme.accentColor : props.theme.bgColor};
+
   a {
     display: block;
   }
