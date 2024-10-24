@@ -23,7 +23,7 @@ export const CoinsList = styled.ul``;
 export const Coin = styled.li`
   background-color: whitesmoke;
   color: ${(props) => props.theme.textColor};
-  padding: 20px;
+  padding: 5px;
   border-radius: 15px;
   margin-bottom: 10px;
 

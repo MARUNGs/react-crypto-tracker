@@ -14,7 +14,6 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchCoins } from "../api";
 
 function Coins() {
-  // 사용법: const { isLoading/*apiFunction 로딩유무*/, data/*리턴값*/ } = useQuery(key, apiFunction)
   const { isLoading: loading, data: coinList } = useQuery<ICoins[], Error>({
     queryKey: ["allCoins"],
     queryFn: fetchCoins,
