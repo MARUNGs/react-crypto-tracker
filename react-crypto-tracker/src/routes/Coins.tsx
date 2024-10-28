@@ -13,6 +13,8 @@ import ICoins from "../types/CoinsInterface";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCoins } from "../api";
 import { Helmet } from "react-helmet";
+import { useSetRecoilState } from "recoil";
+import { isDarkAtom } from "../atoms";
 
 function Coins() {
   const { isLoading: loading, data: coinList } = useQuery<ICoins[], Error>({
@@ -20,6 +22,10 @@ function Coins() {
     queryFn: fetchCoins,
     select: (data) => data.slice(0, 100),
   });
+
+  // atom의 값을 설정하는 훅: useSetRecoilState() (like. setState())
+  const setTheme = useSetRecoilState(isDarkAtom);
+  const toggleTheme = () => setTheme((current) => !current);
 
   /*
   // React Query를 사용하게 되면 이건 필요없어짐... 기록용으로 보관하자.
@@ -43,10 +49,11 @@ function Coins() {
     <>
       <Container>
         <Helmet>
-          <title>코인</title>
+          <title>Coins</title>
         </Helmet>
         <Header>
           <Title>Coins</Title>
+          <button onClick={toggleTheme}>밤낮변경</button>
         </Header>
 
         {loading ? (

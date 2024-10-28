@@ -4,16 +4,17 @@ import { GlobalStyle } from "./styles/AppStyled";
 import { ThemeProvider } from "styled-components";
 import { darkTheme, lightTheme } from "./theme";
 import { useState } from "react";
+import { useRecoilValue } from "recoil";
+import { isDarkAtom } from "./atoms";
 
 function App() {
-  const [isDark, setIsDark] = useState(false);
-  const toggleDark = () => setIsDark((current) => !current);
+  // atom의 값을 감지하기 위한 훅: useRecoilValue
+  const isDark = useRecoilValue(isDarkAtom);
 
   return (
     <>
       {/* ThemeProvider 위치 변경 index.tsx -> App.tsx */}
       <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
-        <button onClick={toggleDark}>밤낮변경</button>
         <GlobalStyle />
         <Router />
         <ReactQueryDevtools initialIsOpen={true} />
