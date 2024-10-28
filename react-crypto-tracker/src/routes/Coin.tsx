@@ -44,6 +44,8 @@ function Coin() {
 
   const loading = infoLoading || priceLoading;
 
+  const onClick = () => (window.location.href = "/");
+
   /* react-query 사용을 위한 기존 소스 주석처리
   const [loading, setLoading] = useState(true);
   const [info, setInfo] = useState<InfoData>();
@@ -74,7 +76,7 @@ function Coin() {
           </title>
         </Helmet>
         <Header>
-          <Title>
+          <Title onClick={onClick}>
             Coin -{" "}
             {state?.name ? state.name : loading ? "Loading ..." : info?.name}
           </Title>
