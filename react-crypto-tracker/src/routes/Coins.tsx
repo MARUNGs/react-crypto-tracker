@@ -12,6 +12,7 @@ import {
 import ICoins from "../types/CoinsInterface";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCoins } from "../api";
+import { Helmet } from "react-helmet";
 
 function Coins() {
   const { isLoading: loading, data: coinList } = useQuery<ICoins[], Error>({
@@ -41,6 +42,9 @@ function Coins() {
   return (
     <>
       <Container>
+        <Helmet>
+          <title>코인</title>
+        </Helmet>
         <Header>
           <Title>Coins</Title>
         </Header>

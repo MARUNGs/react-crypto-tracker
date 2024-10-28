@@ -6,6 +6,7 @@ import {
   Link,
   useMatch,
 } from "react-router-dom";
+import { Helmet } from "react-helmet";
 import InfoData from "../types/CoinInterface";
 import PriceData from "../types/CoinInterface";
 import {
@@ -38,6 +39,7 @@ function Coin() {
   const { isLoading: priceLoading, data: price } = useQuery<PriceData>({
     queryKey: ["tickers", coinId],
     queryFn: () => fetchCoinTickers(`${coinId}`),
+    refetchInterval: 5000,
   });
 
   const loading = infoLoading || priceLoading;
@@ -66,13 +68,17 @@ function Coin() {
   return (
     <>
       <Container>
+        <Helmet>
+          <title>
+            {state?.name ? state.name : loading ? "Loading ..." : info?.name}
+          </title>
+        </Helmet>
         <Header>
           <Title>
             Coin -{" "}
             {state?.name ? state.name : loading ? "Loading ..." : info?.name}
           </Title>
         </Header>
-
         {loading ? (
           <Loader>Loading ...</Loader>
         ) : (
@@ -89,6 +95,10 @@ function Coin() {
               <OveriewItem>
                 <span>Open Source: </span>
                 <span>{info?.open_source ? `yes` : `no`}</span>
+              </OveriewItem>
+              <OveriewItem>
+                <span>Price: </span>
+                <span>${price?.quotes.USD.price.toFixed(2)}</span>
               </OveriewItem>
             </Overview>
 
@@ -115,7 +125,11 @@ function Coin() {
             </Tabs>
 
             {/* Link URL에 따라 아래의 컴포넌트가 다르게 보여짐. */}
-            <Outlet />
+            <Outlet
+              context={{
+                coinId,
+              }}
+            />
           </>
         )}
       </Container>
